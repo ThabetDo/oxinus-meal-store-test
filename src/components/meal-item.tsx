@@ -1,6 +1,3 @@
-import {IMeal} from "../utils/interfaces/meal.interface";
-
-
 import * as React from 'react';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -11,21 +8,20 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import {useFavorites} from "../context/favorites-context";
+import {IMeal} from "../utils/interfaces/meal.interface";
 
 export default function MealItem(props: { meal: IMeal }) {
-    const {idMeal, strInstructions, strMeal, strMealThumb, strTags,} = props.meal
+    const {idMeal, strInstructions, strMeal, strMealThumb, strTags} = props.meal;
     const {state, addFavorite, removeFavorite} = useFavorites();
 
-    const favoriteLis: IMeal[] = state.favorites ?? []
-    const toggleFavorit = () => {
-        mealExistInFavList()
-            ? removeFavorite(props.meal)
-            : addFavorite(props.meal)
-        // Toggle favorite from store
-    }
-    const mealExistInFavList = () => {
-        return favoriteLis.findIndex(f => f.idMeal === idMeal) !== -1
-    }
+    const favoriteList: IMeal[] = state.favorites ?? [];
+    const toggleFavorite = () => {
+        mealExistsInFavList() ? removeFavorite(props.meal) : addFavorite(props.meal);
+    };
+
+    const mealExistsInFavList = () => {
+        return favoriteList.findIndex(f => f.idMeal === idMeal) !== -1;
+    };
 
     return (
         <Card sx={{
@@ -35,7 +31,13 @@ export default function MealItem(props: { meal: IMeal }) {
             height: '100%',
         }}>
             <CardHeader
-                title={strMeal}
+                title={<div style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    width: '100%',
+                    paddingRight: '20px'
+                }} title={strMeal}>{strMeal}</div>}
                 subheader={strTags}
             />
             <CardMedia
@@ -51,12 +53,14 @@ export default function MealItem(props: { meal: IMeal }) {
                 </CardContent>
             }
             <CardActions disableSpacing>
-                <IconButton aria-label="add to favorites" color={mealExistInFavList() ? 'error' : 'default'}
-                            onClick={toggleFavorit}>
+                <IconButton
+                    aria-label="add to favorites"
+                    color={mealExistsInFavList() ? 'error' : 'default'}
+                    onClick={toggleFavorite}
+                >
                     <FavoriteIcon/>
                 </IconButton>
             </CardActions>
         </Card>
-
     );
 }
